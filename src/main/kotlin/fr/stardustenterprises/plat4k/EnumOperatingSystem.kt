@@ -13,18 +13,37 @@ enum class EnumOperatingSystem(
 ) {
     WINDOWS("Windows", arrayOf("windows", "win"), ".dll", ""),
     LINUX("Linux", arrayOf("linux", "nix"), postCheck = { !checkMusl() }),
-    LINUX_MUSL("Linux-MUSL", arrayOf("linux-musl", "linux", "nix"), postCheck = { checkMusl() }),
+    LINUX_MUSL("Linux-MUSL", arrayOf("linux", "nix"), postCheck = { checkMusl() }),
     MACOS("macOS", arrayOf("darwin", "macos", "osx"), ".dylib"),
     SOLARIS("Solaris", arrayOf("solaris", "sunos")),
     FREE_BSD("FreeBSD", "freebsd"),
     NET_BSD("NetBSD", "netbsd"),
-    OPEN_BSD("OpenBSD", "openbsd");
+    OPEN_BSD("OpenBSD", "openbsd"),
+    UNKNOWN("Unknown", "unknown");
 
     constructor(osName: String, identifier: String) : this(osName, arrayOf(identifier))
 
     companion object {
         private var isMusl: Boolean? = null
         private val lock = Object()
+        private val os by lazy {
+            val name = System.getProperty("os.name").lowercase()
+
+            var operatingSystem = UNKNOWN
+            val iter = values().maxOf { it.identifiers.size }
+            for (i in 0 until iter) {
+                values().filter { it.identifiers.size > i }.forEach {
+                    val id = it.identifiers[i]
+                    if (name.contains(id)) {
+                        operatingSystem = it
+                    }
+                }
+            }
+            operatingSystem
+        }
+
+        val currentOS: EnumOperatingSystem
+            get() = os
 
         private fun checkMusl(): Boolean {
             if (isMusl == null) {

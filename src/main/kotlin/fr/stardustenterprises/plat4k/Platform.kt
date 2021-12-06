@@ -8,7 +8,7 @@ data class Platform(
         @JvmStatic
         fun getCurrent() =
             Platform(
-                EnumOperatingSystem.parseCurrent(),
+                EnumOperatingSystem.currentOS,
                 EnumArchitecture.currentArch()
             )
     }
