@@ -12,8 +12,8 @@ enum class EnumOperatingSystem(
     private val postCheck: () -> Boolean = { true }
 ) {
     WINDOWS("Windows", arrayOf("windows", "win"), ".dll", ""),
-    LINUX("Linux", arrayOf("linux", "nix"), postCheck = { !checkMusl() }),
-    LINUX_MUSL("Linux-musl", arrayOf("linux", "nix"), postCheck = { checkMusl() }),
+    LINUX("Linux", arrayOf("linux", "nix"), postCheck = { !muslPresent }),
+    LINUX_MUSL("Linux-musl", arrayOf("linux", "nix"), postCheck = { muslPresent }),
     MACOS("macOS", arrayOf("darwin", "macos", "osx"), ".dylib"),
     SOLARIS("Solaris", arrayOf("solaris", "sunos")),
     FREE_BSD("FreeBSD", "freebsd"),
@@ -40,27 +40,17 @@ enum class EnumOperatingSystem(
             operatingSystem
         }
 
-        private var isMusl: Boolean? = null
-        private val lock = Object()
-
-        private fun checkMusl(): Boolean {
-            if (isMusl == null) {
-                isMusl = synchronized(lock) {
-                    var check: Boolean
-                    try {
-                        val p = ProcessBuilder("ldd", "--version").start()
-                        var line = BufferedReader(InputStreamReader(p.inputStream)).readLine()
-                        if (line == null) {
-                            line = BufferedReader(InputStreamReader(p.errorStream)).readLine()
-                        }
-                        check = line != null && line.lowercase(Locale.getDefault()).startsWith("musl")
-                    } catch (fail: Exception) {
-                        check = false
-                    }
-                    check
+        val muslPresent: Boolean by lazy {
+            try {
+                val p = ProcessBuilder("ldd", "--version").start()
+                var line = BufferedReader(InputStreamReader(p.inputStream)).readLine()
+                if (line == null) {
+                    line = BufferedReader(InputStreamReader(p.errorStream)).readLine()
                 }
+                line != null && line.lowercase(Locale.getDefault()).startsWith("musl")
+            } catch (fail: Exception) {
+                false
             }
-            return isMusl!!
         }
     }
 }
