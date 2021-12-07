@@ -24,9 +24,7 @@ enum class EnumOperatingSystem(
     constructor(osName: String, identifier: String) : this(osName, arrayOf(identifier))
 
     companion object {
-        private var isMusl: Boolean? = null
-        private val lock = Object()
-        private val os by lazy {
+        val currentOS: EnumOperatingSystem by lazy {
             val name = System.getProperty("os.name").lowercase()
 
             var operatingSystem = UNKNOWN
@@ -42,8 +40,8 @@ enum class EnumOperatingSystem(
             operatingSystem
         }
 
-        val currentOS: EnumOperatingSystem
-            get() = os
+        private var isMusl: Boolean? = null
+        private val lock = Object()
 
         private fun checkMusl(): Boolean {
             if (isMusl == null) {
