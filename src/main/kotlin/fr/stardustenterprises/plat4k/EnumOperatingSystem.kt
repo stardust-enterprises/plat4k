@@ -2,7 +2,6 @@ package fr.stardustenterprises.plat4k
 
 import java.io.BufferedReader
 import java.io.InputStreamReader
-import java.util.*
 
 enum class EnumOperatingSystem(
     val osName: String,
@@ -47,7 +46,7 @@ enum class EnumOperatingSystem(
                 if (line == null) {
                     line = BufferedReader(InputStreamReader(p.errorStream)).readLine()
                 }
-                line != null && line.lowercase(Locale.getDefault()).startsWith("musl")
+                line != null && line.lowercase().startsWith("musl")
             } catch (fail: Exception) {
                 false
             }
