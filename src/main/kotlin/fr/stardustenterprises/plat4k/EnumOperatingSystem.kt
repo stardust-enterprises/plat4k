@@ -13,7 +13,7 @@ enum class EnumOperatingSystem(
 ) {
     WINDOWS("Windows", arrayOf("windows", "win"), ".dll", ""),
     LINUX("Linux", arrayOf("linux", "nix"), postCheck = { !checkMusl() }),
-    LINUX_MUSL("Linux-MUSL", arrayOf("linux", "nix"), postCheck = { checkMusl() }),
+    LINUX_MUSL("Linux-musl", arrayOf("linux", "nix"), postCheck = { checkMusl() }),
     MACOS("macOS", arrayOf("darwin", "macos", "osx"), ".dylib"),
     SOLARIS("Solaris", arrayOf("solaris", "sunos")),
     FREE_BSD("FreeBSD", "freebsd"),
