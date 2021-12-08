@@ -1,5 +1,8 @@
 package fr.stardustenterprises.plat4k
 
+/**
+ * Enum of known Processor Architectures.
+ */
 enum class EnumArchitecture(
     vararg val identifiers: String
 ) {
@@ -33,6 +36,7 @@ enum class EnumArchitecture(
                     }
                 }
             }
+            
             architecture
         }
     }
