@@ -40,7 +40,7 @@ dependencies {
 ```
 
 # contributing
-contributions are open, feel free to open a [pull request](https://github.com/stardust-enterprises/plat4k/pull/new).
+contributions are open, feel free to open a [pull request](https://github.com/stardust-enterprises/plat4k/pull/new) (especially for new OS/architecture support).
 
 # licensing
 this project is under the [MIT license](https://github.com/stardust-enterprises/plat4k/blob/trunk/LICENSE).
