@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "fr.stardustenterprises"
-version = "1.0.0-rc2"
+version = "1.0.0"
 
 repositories {
     mavenCentral()
