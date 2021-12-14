@@ -3,6 +3,10 @@ package fr.stardustenterprises.plat4k
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
+/**
+ * Enum of known Operating System types,
+ * also includes `glibc` or `musl` stdlib detection.
+ */
 enum class EnumOperatingSystem(
     val osName: String,
     val identifiers: Array<String>,
