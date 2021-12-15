@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "fr.stardustenterprises"
-version = "1.0.0"
+version = "1.0.0-rc4"
 
 repositories {
     mavenCentral()
