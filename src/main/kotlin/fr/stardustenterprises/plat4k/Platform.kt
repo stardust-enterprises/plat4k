@@ -9,9 +9,12 @@ data class Platform(
     val architecture: EnumArchitecture
 ) {
     companion object {
-        val current = Platform(
-            EnumOperatingSystem.currentOS,
-            EnumArchitecture.currentArch
-        )
+        @JvmStatic
+        val current: Platform by lazy {
+            Platform(
+                EnumOperatingSystem.currentOS,
+                EnumArchitecture.currentArch
+            )
+        }
     }
 }
