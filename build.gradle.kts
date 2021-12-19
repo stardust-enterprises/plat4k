@@ -10,7 +10,7 @@ val NEXUS_USERNAME: String by project
 val NEXUS_PASSWORD: String by project
 
 group = "fr.stardustenterprises"
-version = "1.1.0"
+version = "1.1.1"
 
 repositories {
     mavenCentral()
@@ -47,10 +47,10 @@ publishing {
             pom {
                 name.set("plat4k")
                 description.set("Platform identifier library for the JVM.")
-                url.set("<library/project url>")
+                url.set("https://github.com/stardust-enterprises/plat4k")
                 licenses {
                     license {
-                        name.set("ISC LIcense")
+                        name.set("ISC License")
                         url.set("https://opensource.org/licenses/ISC")
                         distribution.set("repo")
                     }
