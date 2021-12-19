@@ -71,7 +71,6 @@ publishing {
     }
     repositories {
         maven {
-
             credentials {
                 username = NEXUS_USERNAME
                 password = NEXUS_PASSWORD
