@@ -1,23 +1,16 @@
-import com.vanniktech.maven.publish.MavenPublishBaseExtension
-import com.vanniktech.maven.publish.SonatypeHost
-
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath("com.vanniktech:gradle-maven-publish-plugin:0.18.0")
-    }
-}
-
 plugins {
+    `java-library`
     kotlin("jvm") version "1.6.0"
+    id("org.jetbrains.dokka") version "1.6.0"
+    `maven-publish`
+    signing
 }
 
-apply(plugin = "com.vanniktech.maven.publish.base")
+val NEXUS_USERNAME: String by project
+val NEXUS_PASSWORD: String by project
 
 group = "fr.stardustenterprises"
-version = "1.1.0-rc1"
+version = "1.1.0"
 
 repositories {
     mavenCentral()
@@ -27,33 +20,69 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.6.0")
 }
 
-plugins.withId("com.vanniktech.maven.publish.base") {
-    configure<MavenPublishBaseExtension> {
-        publishToMavenCentral(SonatypeHost.S01)
-        signAllPublications()
-        pom {
-            name.set(project.name)
-            description.set("Platform identifier library for the JVM.")
-            url.set("https://github.com/stardust-enterprises/plat4k")
-            licenses {
-                license {
-                    name.set("ISC License")
-                    url.set("https://opensource.org/licenses/ISC")
-                    distribution.set("repo")
+val sourcesJar by tasks.registering(Jar::class) {
+    archiveClassifier.set("sources")
+    from(sourceSets.main.get().allSource)
+}
+
+val javadocJar by tasks.registering(Jar::class) {
+    archiveClassifier.set("javadoc")
+    val javadoc = tasks.named("dokkaJavadoc")
+    dependsOn(javadoc)
+    from(javadoc.get().outputs)
+}
+
+artifacts {
+    archives(sourcesJar)
+    archives(javadocJar)
+}
+
+publishing {
+    publications {
+        register("mavenJava", MavenPublication::class) {
+            from(components["java"])
+            artifact(sourcesJar.get())
+            artifact(javadocJar.get())
+
+            pom {
+                name.set("plat4k")
+                description.set("Platform identifier library for the JVM.")
+                url.set("<library/project url>")
+                licenses {
+                    license {
+                        name.set("ISC LIcense")
+                        url.set("https://opensource.org/licenses/ISC")
+                        distribution.set("repo")
+                    }
                 }
-            }
-            scm {
-                connection.set("scm:git:https://github.com/stardust-enterprises/plat4k.git")
-                developerConnection.set("scm:git:ssh://git@github.com/stardust-enterprises/plat4k.git")
-                url.set("https://github.com/stardust-enterprises/plat4k")
-            }
-            developers {
-                developer {
-                    id.set("xtrm")
-                    name.set("xtrm")
-                    url.set("https://github.com/xtrm-en")
+                developers {
+                    developer {
+                        id.set("xtrm")
+                        name.set("xtrm")
+                    }
+                }
+                scm {
+                    connection.set("scm:git:git://github.com/stardust-enterprises/plat4k.git")
+                    developerConnection.set("scm:git:ssh://github.com/stardust-enterprises/plat4k.git")
+                    url.set("https://github.com/stardust-enterprises/plat4k")
                 }
             }
         }
     }
+    repositories {
+        maven {
+
+            credentials {
+                username = NEXUS_USERNAME
+                password = NEXUS_PASSWORD
+            }
+
+            name = "Sonatype"
+            url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+        }
+    }
+}
+
+signing {
+    sign(publishing.publications["mavenJava"])
 }
