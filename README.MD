@@ -1,25 +1,66 @@
-# plat4k [![Maven Central](https://maven-badges.herokuapp.com/maven-central/fr.stardustenterprises/plat4k/badge.svg)](https://maven-badges.herokuapp.com/maven-central/fr.stardustenterprises/plat4k)
+# plat4k [![Maven Central][badge-mvnc]][plat4k-mvnc]
 
-a platform identifier library for the 
-[JVM](https://adoptium.net), written in [Kotlin](https://kotlinlang.org).
+a platform identifier library for the [JVM][jvm], written in [Kotlin][kotlin].
 
 # how use
-to import from [maven central](https://repo1.maven.org/maven2/), just add
-[plat4k](https://github.com/stardust-enterprises/plat4k) to your dependencies block:
-```kotlin
-// change to the latest version
-val PLAT4K_VERSION = "1.1.2" 
 
+you can import [plat4k][plat4k] from [maven central][mvnc] just by adding it to your dependencies:
+
+## gradle
+
+```kotlin
 dependencies {
-    implementation("fr.stardustenterprises:plat4k:$PLAT4K_VERSION")
+    implementation("fr.stardustenterprises:plat4k:1.2.0")
 }
 ```
 
+## maven
+
+```xml
+<dependency>
+    <groupId>fr.stardustenterprises</groupId>
+    <artifactId>plat4k</artifactId>
+    <version>1.2.0</version>
+</dependency>
+```
+
 # contributing
-contributions are open, feel free to open a [pull request](https://github.com/stardust-enterprises/plat4k/pull/new) (especially for new OS/architecture support).
+
+you can contribute by [forking the repository][fork], making your changes and [creating a new pull request][new-pr]
+describing what you changed, why and how.
 
 # licensing
-this project is under the [ISC license](https://github.com/stardust-enterprises/plat4k/blob/trunk/LICENSE),
-except for the [ELFAnalyser](https://github.com/stardust-enterprises/plat4k/tree/trunk/src/main/java/com/sun/jna/ELFAnalyser.java)
-class taken from the [JNA Project](https://github.com/java-native-access/jna/), which is itself licensed under the 
-[Apache 2.0 license](http://www.apache.org/licenses/).
+
+this project is under the [ISC license][blob-license], except for the [ELFAnalyser][blob-elf-analyser] class taken from
+the [JNA Project][jna], which is itself licensed under the [Apache 2.0 license][apache-license-2.0].
+
+
+<!-- Links -->
+
+[jvm]: https://adoptium.net "adoptium website"
+
+[kotlin]: https://kotlinlang.org "kotlin website"
+
+[jna]: https://github.com/java-native-access/jna/ "jna github repository"
+
+[plat4k]: https://github.com/stardust-enterprises/plat4k "plat4k github repository"
+
+[fork]: https://github.com/stardust-enterprises/plat4k/fork "fork this repository"
+
+[new-pr]: https://github.com/stardust-enterprises/plat4k/pulls/new "create a new pull request"
+
+[new-issue]: https://github.com/stardust-enterprises/plat4k/issues/new "create a new issue"
+
+[mvnc]: https://repo1.maven.org/maven2/ "maven central website"
+
+[plat4k-mvnc]: https://maven-badges.herokuapp.com/maven-central/fr.stardustenterprises/plat4k "maven central repository"
+
+[apache-license-2.0]: https://www.apache.org/licenses/LICENSE-2.0 "the apache 2.0 license"
+
+[blob-license]: https://github.com/stardust-enterprises/plat4k/blob/trunk/LICENSE "LICENSE source file"
+
+[blob-elf-analyser]: https://github.com/stardust-enterprises/plat4k/tree/trunk/src/main/kotlin/fr/stardust/enterprises/plat4k/jna/ELFAnalyser.kt "ELFAnalyser.kt source file"
+
+<!-- Badges -->
+
+[badge-mvnc]: https://maven-badges.herokuapp.com/maven-central/fr.stardustenterprises/plat4k/badge.svg "maven central badge"
