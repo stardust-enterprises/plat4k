@@ -1,4 +1,5 @@
-# plat4k
+# plat4k [![Maven Central](https://maven-badges.herokuapp.com/maven-central/fr.stardustenterprises/plat4k/badge.svg)](https://maven-badges.herokuapp.com/maven-central/fr.stardustenterprises/plat4k)
+
 a platform identifier library for the 
 [JVM](https://adoptium.net), written in [Kotlin](https://kotlinlang.org).
 
