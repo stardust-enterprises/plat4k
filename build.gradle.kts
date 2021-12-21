@@ -11,11 +11,8 @@ plugins {
     signing
 }
 
-val NEXUS_USERNAME: String by project
-val NEXUS_PASSWORD: String by project
-
 group = "fr.stardustenterprises"
-version = "1.1.2"
+version = "1.2.0"
 
 repositories {
     mavenCentral()
@@ -35,6 +32,7 @@ tasks {
             configureEach {
                 skipDeprecated.set(true)
                 reportUndocumented.set(true)
+
                 perPackageOption {
                     matchingRegex.set(""".*\.jna.*""")
                     suppress.set(true)
@@ -72,6 +70,7 @@ publishing {
                 name.set("plat4k")
                 description.set("Platform identifier library for the JVM.")
                 url.set("https://github.com/stardust-enterprises/plat4k")
+
                 licenses {
                     license {
                         name.set("ISC License")
@@ -79,12 +78,14 @@ publishing {
                         distribution.set("repo")
                     }
                 }
+
                 developers {
                     developer {
                         id.set("xtrm")
                         name.set("xtrm")
                     }
                 }
+
                 scm {
                     connection.set("scm:git:git://github.com/stardust-enterprises/plat4k.git")
                     developerConnection.set("scm:git:ssh://github.com/stardust-enterprises/plat4k.git")
@@ -93,16 +94,15 @@ publishing {
             }
         }
     }
-    repositories {
-        maven {
-            credentials {
-                username = NEXUS_USERNAME
-                password = NEXUS_PASSWORD
-            }
 
-            name = "Sonatype"
-            url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+    repositories.maven {
+        credentials {
+            username = project.properties["NEXUS_USERNAME"] as? String ?: ""
+            password = project.properties["NEXUS_PASSWORD"] as? String ?: ""
         }
+
+        name = "Sonatype"
+        url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
     }
 }
 
