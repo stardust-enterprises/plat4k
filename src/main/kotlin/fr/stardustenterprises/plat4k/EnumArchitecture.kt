@@ -1,6 +1,6 @@
 package fr.stardustenterprises.plat4k
 
-import com.sun.jna.ELFAnalyser
+import fr.stardustenterprises.plat4k.jna.ELFAnalyser
 import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
@@ -68,17 +68,28 @@ enum class EnumArchitecture(
                 } catch (exception: Throwable) {
                     null
                 } ?: System.getProperty("os.arch") ?: unameArch
-                ?: throw RuntimeException("Couldn't detect runtime architecture.")
+                ?: throw RuntimeException(
+                    "Couldn't detect runtime architecture."
+                )
             }.lowercase()
 
             if (arch == "zarch_64") {
                 arch = "s390x"
             }
+
             // https://bugs.openjdk.java.net/browse/JDK-8073139
-            if (arch == "ppc64" && System.getProperty("sun.cpu.endian") == "little") {
+            if (
+                arch == "ppc64" &&
+                System.getProperty("sun.cpu.endian") == "little"
+            ) {
                 arch = "ppc64le"
             }
-            if(arch == "arm" && EnumOperatingSystem.currentOS == EnumOperatingSystem.LINUX && isSoftFloat) {
+
+            if (
+                arch == "arm" &&
+                EnumOperatingSystem.currentOS == EnumOperatingSystem.LINUX &&
+                isSoftFloat
+            ) {
                 arch = "armel"
             }
 
