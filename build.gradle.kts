@@ -31,7 +31,6 @@ tasks {
         dokkaSourceSets {
             configureEach {
                 skipDeprecated.set(true)
-                reportUndocumented.set(true)
 
                 perPackageOption {
                     matchingRegex.set(""".*\.jna.*""")
@@ -49,15 +48,19 @@ val sourcesJar by tasks.registering(Jar::class) {
 
 val javadocJar by tasks.registering(Jar::class) {
     archiveClassifier.set("javadoc")
-    val javadoc = tasks.named("dokkaHtml")
-    dependsOn(javadoc)
-    from(javadoc.get().outputs)
+    dependsOn(tasks.dokkaHtml)
+    from(tasks.dokkaHtml)
 }
 
 artifacts {
     archives(sourcesJar)
     archives(javadocJar)
 }
+
+val libraryName = "plat4k"
+val desc = "Platform identifier library for the JVM."
+val devs = arrayOf("xtrm", "lambdagg")
+val repo = "stardust-enterprises/$libraryName"
 
 publishing {
     publications {
@@ -67,10 +70,9 @@ publishing {
             artifact(javadocJar.get())
 
             pom {
-                name.set("plat4k")
-                description.set("Platform identifier library for the JVM.")
-                url.set("https://github.com/stardust-enterprises/plat4k")
-
+                name.set(libraryName)
+                description.set(desc)
+                url.set("https://github.com/$repo")
                 licenses {
                     license {
                         name.set("ISC License")
@@ -78,31 +80,33 @@ publishing {
                         distribution.set("repo")
                     }
                 }
-
                 developers {
-                    developer {
-                        id.set("xtrm")
-                        name.set("xtrm")
+                    devs.forEach {
+                        developer {
+                            id.set(it)
+                            name.set(it)
+                        }
                     }
                 }
-
                 scm {
-                    connection.set("scm:git:git://github.com/stardust-enterprises/plat4k.git")
-                    developerConnection.set("scm:git:ssh://github.com/stardust-enterprises/plat4k.git")
-                    url.set("https://github.com/stardust-enterprises/plat4k")
+                    connection.set("scm:git:git://github.com/$repo.git")
+                    developerConnection.set("scm:git:ssh://github.com/$repo.git")
+                    url.set("https://github.com/$repo")
                 }
             }
         }
     }
 
-    repositories.maven {
-        credentials {
-            username = project.properties["NEXUS_USERNAME"] as? String ?: ""
-            password = project.properties["NEXUS_PASSWORD"] as? String ?: ""
-        }
+    repositories {
+        maven {
+            credentials {
+                username = project.properties["NEXUS_USERNAME"] as? String
+                password = project.properties["NEXUS_PASSWORD"] as? String
+            }
 
-        name = "Sonatype"
-        url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+            name = "Sonatype"
+            url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+        }
     }
 }
 
