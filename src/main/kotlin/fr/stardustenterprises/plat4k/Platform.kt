@@ -9,6 +9,9 @@ data class Platform(
     val architecture: EnumArchitecture
 ) {
     companion object {
+        /**
+         * The current detected [Platform] instance.
+         */
         @JvmStatic
         val current: Platform by lazy {
             Platform(

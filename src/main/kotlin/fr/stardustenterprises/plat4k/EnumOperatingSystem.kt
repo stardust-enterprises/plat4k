@@ -10,17 +10,17 @@ import java.io.InputStreamReader
 enum class EnumOperatingSystem(
     val osName: String,
     val aliases: Array<String>,
-    val nativeSuffix: String = ".so",
     val nativePrefix: String = "lib",
+    val nativeSuffix: String = ".so",
     private val postCheck: () -> Boolean = { true }
 ) {
-    WINDOWS("Windows", arrayOf("windows", "win"), ".dll", ""),
+    WINDOWS("Windows", arrayOf("windows", "win"), "", ".dll"),
 
-    LINUX("Linux", arrayOf("linux", "nix"), postCheck = { !muslPresent && !isDalvikRuntime }),
-    LINUX_MUSL("Linux-musl", arrayOf("linux", "nix"), postCheck = { muslPresent && !isDalvikRuntime }),
-    ANDROID("Android", arrayOf("linux", "nix"), postCheck = { isDalvikRuntime }),
+    LINUX("Linux", arrayOf("linux", "nix", "nux"), postCheck = { !muslPresent && !isAndroid }),
+    LINUX_MUSL("Linux-musl", arrayOf("linux", "nix", "nux"), postCheck = { muslPresent && !isAndroid }),
+    ANDROID("Android", arrayOf("android", "linux", "nix", "nux"), postCheck = { isAndroid }),
 
-    MACOS("macOS", arrayOf("darwin", "macos", "osx"), ".dylib"),
+    MACOS("macOS", arrayOf("darwin", "macos", "osx"), nativeSuffix = ".dylib"),
 
     SOLARIS("Solaris", arrayOf("solaris", "sunos")),
 
@@ -35,6 +35,9 @@ enum class EnumOperatingSystem(
     constructor(osName: String, identifier: String) : this(osName, arrayOf(identifier))
 
     companion object {
+        /**
+         * The parsed [EnumOperatingSystem] reference.
+         */
         @JvmStatic
         val currentOS: EnumOperatingSystem by lazy {
             val name = System.getProperty("os.name").lowercase()
@@ -53,6 +56,11 @@ enum class EnumOperatingSystem(
             operatingSystem
         }
 
+        /**
+         * Is the current Operating System using `musl` as the C stdlib.
+         *
+         * For more info, see [musl libc](https://musl.libc.org/)
+         */
         @JvmStatic
         val muslPresent: Boolean by lazy {
             try {
@@ -67,8 +75,11 @@ enum class EnumOperatingSystem(
             }
         }
 
+        /**
+         * Is the current Operating System [ANDROID].
+         */
         @JvmStatic
-        val isDalvikRuntime: Boolean =
-            "dalvik" == System.getProperty("java.vm.name").lowercase()
+        val isAndroid: Boolean =
+            System.getProperty("java.vm.vendor")?.lowercase()?.contains("android") ?: false
     }
 }

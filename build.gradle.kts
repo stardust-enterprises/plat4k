@@ -1,3 +1,8 @@
+@file:Suppress("UNUSED_VARIABLE")
+
+import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     `java-library`
     kotlin("jvm") version "1.6.0"
@@ -10,7 +15,7 @@ val NEXUS_USERNAME: String by project
 val NEXUS_PASSWORD: String by project
 
 group = "fr.stardustenterprises"
-version = "1.1.1"
+version = "1.1.2"
 
 repositories {
     mavenCentral()
@@ -20,6 +25,25 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.6.0")
 }
 
+tasks {
+    withType<KotlinCompile> {
+        kotlinOptions.jvmTarget = "1.8"
+    }
+
+    val dokkaHtml by getting(DokkaTask::class) {
+        dokkaSourceSets {
+            configureEach {
+                skipDeprecated.set(true)
+                reportUndocumented.set(true)
+                perPackageOption {
+                    matchingRegex.set(""".*\.jna.*""")
+                    suppress.set(true)
+                }
+            }
+        }
+    }
+}
+
 val sourcesJar by tasks.registering(Jar::class) {
     archiveClassifier.set("sources")
     from(sourceSets.main.get().allSource)
@@ -27,7 +51,7 @@ val sourcesJar by tasks.registering(Jar::class) {
 
 val javadocJar by tasks.registering(Jar::class) {
     archiveClassifier.set("javadoc")
-    val javadoc = tasks.named("dokkaJavadoc")
+    val javadoc = tasks.named("dokkaHtml")
     dependsOn(javadoc)
     from(javadoc.get().outputs)
 }

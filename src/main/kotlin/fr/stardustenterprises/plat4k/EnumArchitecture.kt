@@ -33,6 +33,9 @@ enum class EnumArchitecture(
     UNKNOWN("unknown", arrayOf(), -1);
 
     companion object {
+        /**
+         * The parsed [EnumArchitecture] from the [rawArchitecture] value.
+         */
         @JvmStatic
         val currentArch: EnumArchitecture by lazy {
             var architecture = UNKNOWN
@@ -41,7 +44,7 @@ enum class EnumArchitecture(
             for (i in 0 until iter) {
                 values().filter { it.aliases.size > i }.forEach {
                     val id = it.aliases[i]
-                    if (archName.contains(id)) {
+                    if (rawArchitecture.contains(id)) {
                         architecture = it
                     }
                 }
@@ -50,8 +53,11 @@ enum class EnumArchitecture(
             architecture
         }
 
+        /**
+         * A [String] containing the raw architecture name.
+         */
         @JvmStatic
-        val archName: String by lazy {
+        val rawArchitecture: String by lazy {
             var arch = run {
                 try {
                     System.getenv("PROCESSOR_ARCHITECTURE")

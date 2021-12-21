@@ -8,7 +8,7 @@ to import from [maven central](https://repo1.maven.org/maven2/), just add
 [plat4k](https://github.com/stardust-enterprises/plat4k) to your dependencies block:
 ```kotlin
 // change to the latest version
-val PLAT4K_VERSION = "1.1.1" 
+val PLAT4K_VERSION = "1.1.2" 
 
 dependencies {
     implementation("fr.stardustenterprises:plat4k:$PLAT4K_VERSION")
