@@ -10,7 +10,7 @@ you can import [plat4k][plat4k] from [maven central][mvnc] just by adding it to 
 
 ```kotlin
 dependencies {
-    implementation("fr.stardustenterprises:plat4k:1.2.0")
+    implementation("fr.stardustenterprises:plat4k:{VERSION}")
 }
 ```
 
@@ -20,7 +20,7 @@ dependencies {
 <dependency>
     <groupId>fr.stardustenterprises</groupId>
     <artifactId>plat4k</artifactId>
-    <version>1.2.0</version>
+    <version>{VERSION}</version>
 </dependency>
 ```
 
