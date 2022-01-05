@@ -27,7 +27,7 @@ enum class EnumOperatingSystem(
     FREE_BSD("FreeBSD", "freebsd"),
     NET_BSD("NetBSD", "netbsd"),
     OPEN_BSD("OpenBSD", "openbsd"),
-    DRAGONFLY_BSD("DragonflyBSD", "dragonfly")
+    DRAGONFLY_BSD("DragonflyBSD", "dragonfly"),
 
     AIX("AIX", "aix"),
 
