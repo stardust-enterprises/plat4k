@@ -59,7 +59,7 @@ the [JNA Project][jna], which is itself licensed under the [Apache 2.0 license][
 
 [blob-license]: https://github.com/stardust-enterprises/plat4k/blob/trunk/LICENSE "LICENSE source file"
 
-[blob-elf-analyser]: https://github.com/stardust-enterprises/plat4k/tree/trunk/src/main/kotlin/fr/stardust/enterprises/plat4k/jna/ELFAnalyser.kt "ELFAnalyser.kt source file"
+[blob-elf-analyser]: https://github.com/stardust-enterprises/plat4k/tree/trunk/src/main/kotlin/fr/stardustenterprises/plat4k/jna/ELFAnalyser.kt "ELFAnalyser.kt source file"
 
 <!-- Badges -->
 
