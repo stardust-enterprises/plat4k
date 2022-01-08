@@ -9,6 +9,7 @@ plugins {
     id("org.jetbrains.dokka") version "1.6.0"
     `maven-publish`
     signing
+    id("io.github.gradle-nexus.publish-plugin") version "1.0.0"
 }
 
 group = "fr.stardustenterprises"
@@ -57,22 +58,23 @@ artifacts {
     archives(javadocJar)
 }
 
-val libraryName = "plat4k"
+val projectName = project.name
 val desc = "Platform identifier library for the JVM."
 val devs = arrayOf("xtrm", "lambdagg")
-val repo = "stardust-enterprises/$libraryName"
+val repo = "stardust-enterprises/$projectName"
 
 publishing {
     publications {
-        register("mavenJava", MavenPublication::class) {
+        val main by creating(MavenPublication::class) {
             from(components["java"])
             artifact(sourcesJar.get())
             artifact(javadocJar.get())
 
             pom {
-                name.set(libraryName)
+                name.set(projectName)
                 description.set(desc)
                 url.set("https://github.com/$repo")
+
                 licenses {
                     license {
                         name.set("ISC License")
@@ -96,20 +98,20 @@ publishing {
             }
         }
     }
+}
 
+nexusPublishing {
     repositories {
-        maven {
-            credentials {
-                username = project.properties["NEXUS_USERNAME"] as? String
-                password = project.properties["NEXUS_PASSWORD"] as? String
-            }
+        sonatype {
+            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
+            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
 
-            name = "Sonatype"
-            url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+            username.set(project.properties["NEXUS_USERNAME"] as? String ?: return@sonatype)
+            password.set(project.properties["NEXUS_PASSWORD"] as? String ?: return@sonatype)
         }
     }
 }
 
 signing {
-    sign(publishing.publications["mavenJava"])
+    sign(publishing.publications)
 }
