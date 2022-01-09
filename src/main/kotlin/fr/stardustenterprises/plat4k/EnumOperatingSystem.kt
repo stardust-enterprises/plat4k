@@ -4,37 +4,103 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 
 /**
- * Enum of known Operating System types,
- * also includes `glibc` or `musl` stdlib detection.
+ * Enum of known Operating System types, also includes `glibc` or `musl` stdlib
+ * detection.
+ *
+ * @author xtrm, lambdagg
  */
 enum class EnumOperatingSystem(
+    /**
+     * The OperatingSystem's legible name.
+     */
     val osName: String,
+    /**
+     * Aliases from which we can identify this OperatingSystem.
+     */
     val aliases: Array<String>,
+    /**
+     * The native library prefix.
+     */
     val nativePrefix: String = "lib",
+    /**
+     * The native library "suffix"/file extension.
+     */
     val nativeSuffix: String = ".so",
+    /**
+     * Check to be run for extra detection accuracy.
+     */
     private val postCheck: () -> Boolean = { true }
 ) {
+    /**
+     * The Windows OS. (windows, win)
+     */
     WINDOWS("Windows", arrayOf("windows", "win"), "", ".dll"),
 
+    /**
+     * The Linux OS. (linux, nix, nux)
+     */
     LINUX("Linux", arrayOf("linux", "nix", "nux"), postCheck = { !muslPresent && !isAndroid }),
+
+    /**
+     * The Linux MUSL OS. (linux, nix, nux)
+     */
     LINUX_MUSL("Linux-musl", arrayOf("linux", "nix", "nux"), postCheck = { muslPresent && !isAndroid }),
+
+    /**
+     * The Android OS. (android, linux, nix, nux)
+     */
     ANDROID("Android", arrayOf("android", "linux", "nix", "nux"), postCheck = { isAndroid }),
 
+    /**
+     * The Darwin OS. (darwin, macos, osx)
+     */
     MACOS("macOS", arrayOf("darwin", "macos", "osx"), nativeSuffix = ".dylib"),
 
+    /**
+     * The Solaris OS. (solaris, sunos)
+     */
     SOLARIS("Solaris", arrayOf("solaris", "sunos")),
 
+    /**
+     * The FreeBSD OS. (freebsd)
+     */
     FREE_BSD("FreeBSD", "freebsd"),
+
+    /**
+     * The NetBSD OS. (netbsd)
+     */
     NET_BSD("NetBSD", "netbsd"),
+
+    /**
+     * The OpenBSD OS. (openbsd)
+     */
     OPEN_BSD("OpenBSD", "openbsd"),
+
+    /**
+     * The DragonflyBSD OS. (dragonfly)
+     */
     DRAGONFLY_BSD("DragonflyBSD", "dragonfly"),
 
+    /**
+     * The AIX OS. (aix)
+     */
     AIX("AIX", "aix"),
 
+    /**
+     * The Haiku OS. (haiku, hrev*****)
+     */
+    HAIKU("Haiku", arrayOf("haiku", "hrev")),
+
+    /**
+     * An unknown OS.
+     */
     UNKNOWN("Unknown", "unknown");
 
     constructor(osName: String, identifier: String) : this(osName, arrayOf(identifier))
 
+    /**
+     * Companion object for [EnumOperatingSystem]
+     */
     companion object {
         /**
          * The parsed [EnumOperatingSystem] reference.
