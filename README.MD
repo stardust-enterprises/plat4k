@@ -1,4 +1,5 @@
-# plat4k [![Maven Central][badge-mvnc]][plat4k-mvnc]
+# plat4k 
+[![Maven Central][badge-mvnc]][plat4k-mvnc]
 
 a platform identifier library for the [JVM][jvm], written in [Kotlin][kotlin].
 
@@ -31,8 +32,7 @@ describing what you changed, why and how.
 
 # licensing
 
-this project is under the [ISC license][blob-license], except for the [ELFAnalyser][blob-elf-analyser] class taken from
-the [JNA Project][jna], which is itself licensed under the [Apache 2.0 license][apache-license-2.0].
+this project is under the [ISC license][blob-license].
 
 
 <!-- Links -->
@@ -40,8 +40,6 @@ the [JNA Project][jna], which is itself licensed under the [Apache 2.0 license][
 [jvm]: https://adoptium.net "adoptium website"
 
 [kotlin]: https://kotlinlang.org "kotlin website"
-
-[jna]: https://github.com/java-native-access/jna/ "jna github repository"
 
 [plat4k]: https://github.com/stardust-enterprises/plat4k "plat4k github repository"
 
@@ -55,11 +53,7 @@ the [JNA Project][jna], which is itself licensed under the [Apache 2.0 license][
 
 [plat4k-mvnc]: https://maven-badges.herokuapp.com/maven-central/fr.stardustenterprises/plat4k "maven central repository"
 
-[apache-license-2.0]: https://www.apache.org/licenses/LICENSE-2.0 "the apache 2.0 license"
-
 [blob-license]: https://github.com/stardust-enterprises/plat4k/blob/trunk/LICENSE "LICENSE source file"
-
-[blob-elf-analyser]: https://github.com/stardust-enterprises/plat4k/tree/trunk/src/main/kotlin/fr/stardustenterprises/plat4k/jna/ELFAnalyser.kt "ELFAnalyser.kt source file"
 
 <!-- Badges -->
 
