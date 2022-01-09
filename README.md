@@ -1,5 +1,5 @@
 # plat4k 
-[![Maven Central][badge-mvnc]][plat4k-mvnc]
+[![Build][badge-github-ci]][plat4k-gradle-ci] [![Maven Central][badge-mvnc]][plat4k-mvnc]
 
 a platform identifier library for the [JVM][jvm], written in [Kotlin][kotlin].
 
@@ -53,8 +53,12 @@ this project is under the [ISC license][blob-license].
 
 [plat4k-mvnc]: https://maven-badges.herokuapp.com/maven-central/fr.stardustenterprises/plat4k "maven central repository"
 
+[plat4k-gradle-ci]: https://github.com/stardust-enterprises/plat4k/actions/workflows/gradle-ci.yml "gradle ci workflow"
+
 [blob-license]: https://github.com/stardust-enterprises/plat4k/blob/trunk/LICENSE "LICENSE source file"
 
 <!-- Badges -->
 
 [badge-mvnc]: https://maven-badges.herokuapp.com/maven-central/fr.stardustenterprises/plat4k/badge.svg "maven central badge"
+
+[badge-github-ci]: https://github.com/stardust-enterprises/plat4k/actions/workflows/gradle-ci.yml/badge.svg?branch=trunk "github actions badge"
