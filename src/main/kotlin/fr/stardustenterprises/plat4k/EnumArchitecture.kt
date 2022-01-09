@@ -105,6 +105,9 @@ enum class EnumArchitecture(
      */
     UNKNOWN("unknown", arrayOf(), EnumCPUType.UNKNOWN);
 
+    /**
+     * Companion object for [EnumArchitecture]
+     */
     companion object {
         /**
          * The parsed [EnumArchitecture] from the [rawArchitecture] value.

@@ -17,6 +17,9 @@ data class Platform(
      */
     val architecture: EnumArchitecture = EnumArchitecture.UNKNOWN
 ) {
+    /**
+     * Companion object for [Platform]
+     */
     companion object {
         /**
          * The current detected [Platform] instance.

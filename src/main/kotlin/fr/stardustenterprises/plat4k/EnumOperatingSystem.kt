@@ -93,6 +93,9 @@ enum class EnumOperatingSystem(
 
     constructor(osName: String, identifier: String) : this(osName, arrayOf(identifier))
 
+    /**
+     * Companion object for [EnumOperatingSystem]
+     */
     companion object {
         /**
          * The parsed [EnumOperatingSystem] reference.
