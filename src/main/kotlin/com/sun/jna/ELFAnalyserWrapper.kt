@@ -6,6 +6,8 @@ package com.sun.jna
  */
 object ELFAnalyserWrapper {
     /**
+     * @param path to a system binary
+     *
      * @return is the provided path to a hardfloat binary
      */
     fun isArmHardFloat(path: String) =
