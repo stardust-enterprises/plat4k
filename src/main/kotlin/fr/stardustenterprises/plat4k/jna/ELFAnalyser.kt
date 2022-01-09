@@ -38,67 +38,71 @@ import java.nio.charset.StandardCharsets
  */
 class ELFAnalyser private constructor(
     /**
-     * @return filename of the parsed file
+     * The name of the parsed file.
      */
     val filename: String
 ) {
-
     /**
-     * true if the parsed file was detected to be an ELF file
+     * Whether the parsed file was detected to be an ELF file.
      */
     var isELF = false
         private set
 
     /**
-     * true if the parsed file was detected to be for a 64bit architecture
-     * and pointers are expected to be 8byte wide
+     * Whether the parsed file was detected to be for a 64bit architecture
+     * and pointers are expected to be 8-byte wide.
      */
     var is64 = false
         private set
 
     /**
-     * true if the parsed file is detected to be big endian, false if
-     * the file is little endian
+     * Whether the parsed file is detected to be big endian or little
+     * endian.
      */
     var isBigEndian = false
         private set
 
     /**
-     * true if file was detected to conform to the hardware floating-point
-     * procedure-call standard via ELF flags
+     * Whether the parsed file was detected to conform to the hardware
+     * floating-point procedure-call standard via ELF flags.
      */
     var isArmHardFloatFlag = false
         private set
 
     /**
-     * true if file was detected to conform to the software floating-point
-     * procedure-call standard via ELF flags
+     * Whether the parsed file was detected to conform to the software
+     * floating-point procedure-call standard via ELF flags,
      */
     var isArmSoftFloatFlag = false
         private set
 
     /**
-     * true if file was detected to specify, that FP parameters/result
-     * passing conforms to AAPCS, VFP variant (hardfloat)
+     * Whether the parsed file was detected to specify, that FP
+     * parameters/result passing conforms to AAPCS, VFP variant (hardfloat).
      */
     var isArmEabiAapcsVfp = false
         private set
 
     /**
-     * true if the parsed file was detected to be build for the arm
-     * architecture
+     * Whether the parsed file was detected to be built for the ARM arch.
      */
     var isArm = false
         private set
 
+    /**
+     * Whether the parsed file was detected to not be soft float.
+     *
+     * @see isArmEabiAapcsVfp
+     * @see isArmHardFloatFlag
+     */
     val isArmHardFloat: Boolean
         get() = isArmEabiAapcsVfp || isArmHardFloatFlag
 
     @Throws(IOException::class)
     private fun runDetection() {
         RandomAccessFile(filename, "r").use { random ->
-            // run precheck - only of if the file at least hold an ELF header parsing
-            // runs further.
+            // run precheck - only of if the file at least hold an ELF header
+            // parsing runs further.
             if (random.length() > 4) {
                 val magic = ByteArray(4)
 
@@ -116,8 +120,9 @@ class ELFAnalyser private constructor(
 
             random.seek(4)
 
-            // The total header size depends on the pointer size of the platform
-            // so before the header is loaded the pointer size has to be determined
+            // The total header size depends on the pointer size of the
+            // platform so before the header is loaded the pointer size has to
+            // be determined.
             val sizeIndicator = random.readByte()
             val endianessIndicator = random.readByte()
 
@@ -149,41 +154,54 @@ class ELFAnalyser private constructor(
                 parseEabiAapcsVfp(headerData, random)
             }
         }
-        // Swallow - closing
     }
 
     @Throws(IOException::class)
-    private fun parseEabiAapcsVfp(headerData: ByteBuffer, raf: RandomAccessFile) {
+    private fun parseEabiAapcsVfp(
+        headerData: ByteBuffer,
+        raf: RandomAccessFile
+    ) {
         val sectionHeaders = ELFSectionHeaders(is64, isBigEndian, headerData, raf)
 
-        for (eshe in sectionHeaders.entries) {
-            if (".ARM.attributes" == eshe.name) {
-                val armAttributesBuffer = ByteBuffer.allocate(eshe.size)
+        sectionHeaders.entries
+            .filter { it.name == ".ARM.attributes" }
+            .forEach {
 
-                armAttributesBuffer.order(if (isBigEndian) ByteOrder.BIG_ENDIAN else ByteOrder.LITTLE_ENDIAN)
-                raf.channel.read(armAttributesBuffer, eshe.offset.toLong())
+                val armAttributesBuffer = ByteBuffer.allocate(it.size)
+
+                armAttributesBuffer.order(
+                    if (isBigEndian) ByteOrder.BIG_ENDIAN
+                    else ByteOrder.LITTLE_ENDIAN
+                )
+
+                raf.channel.read(armAttributesBuffer, it.offset.toLong())
                 armAttributesBuffer.rewind()
 
                 val armAttributes = parseArmAttributes(armAttributesBuffer)
-                val fileAttributes = armAttributes[1] ?: continue
+                val fileAttributes = armAttributes[1] ?: return
 
-                /*
-                  Tag_ABI_VFP_args, (=28), uleb128
-                   0 The user intended FP parameter/result passing to conform to AAPCS, base variant
-                   1 The user intended FP parameter/result passing to conform to AAPCS, VFP variant
-                   2 The user intended FP parameter/result passing to conform to tool chain-specific conventions
-                   3 Code is compatible with both the base and VFP variants; the non-variadic functions to pass FP
-                     parameters/results
-                 */
-                val abiVFPargValue = fileAttributes[ArmAeabiAttributesTag.ABI_VFP_args]
+                isArmEabiAapcsVfp = let {
+                    /*
+                      Tag_ABI_VFP_args, (=28), uleb128
+                       0 The user intended FP parameter/result passing to conform to AAPCS, base variant
+                       1 The user intended FP parameter/result passing to conform to AAPCS, VFP variant
+                       2 The user intended FP parameter/result passing to conform to tool chain-specific conventions
+                       3 Code is compatible with both the base and VFP variants; the non-variadic functions to pass FP
+                         parameters/results
+                     */
+                    var abiVfpTag = fileAttributes[ArmAeabiAttributesTag.ABI_VFP_args]
 
-                if (abiVFPargValue is Int && abiVFPargValue == 1) {
-                    isArmEabiAapcsVfp = true
-                } else if (abiVFPargValue is BigInteger && abiVFPargValue.toInt() == 1) {
-                    isArmEabiAapcsVfp = true
+                    if (abiVfpTag !is Int) {
+                        if (abiVfpTag is BigInteger) {
+                            abiVfpTag = abiVfpTag.toInt()
+                        } else {
+                            return@let false
+                        }
+                    }
+
+                    abiVfpTag == 1
                 }
             }
-        }
     }
 
     internal class ELFSectionHeaders(
@@ -231,30 +249,39 @@ class ELFAnalyser private constructor(
             val stringBuffer = ByteBuffer.allocate(stringTable.size)
 
             stringBuffer.order(
-                if (bigEndian) ByteOrder.BIG_ENDIAN else ByteOrder.LITTLE_ENDIAN
+                if (bigEndian)
+                    ByteOrder.BIG_ENDIAN
+                else
+                    ByteOrder.LITTLE_ENDIAN
             )
 
             raf.channel.read(stringBuffer, stringTable.offset.toLong())
             stringBuffer.rewind()
-            val baos = ByteArrayOutputStream(20)
+            val stream = ByteArrayOutputStream(20)
 
-            for (eshe in entries) {
-                baos.reset()
-                stringBuffer.position(eshe.nameOffset)
+            entries.forEach {
+                stream.reset()
+                stringBuffer.position(it.nameOffset)
+
                 while (stringBuffer.position() < stringBuffer.limit()) {
-                    val b = stringBuffer.get()
-                    if (b.toInt() == 0) {
+                    val i = stringBuffer.get().toInt()
+
+                    if (i == 0) {
                         break
                     } else {
-                        baos.write(b.toInt())
+                        stream.write(i)
                     }
                 }
-                eshe.name = baos.toString("ASCII")
+
+                it.name = stream.toString("ASCII")
             }
         }
     }
 
-    internal class ELFSectionHeaderEntry(is64: Boolean, sectionHeaderData: ByteBuffer) {
+    internal class ELFSectionHeaderEntry(
+        is64: Boolean,
+        sectionHeaderData: ByteBuffer
+    ) {
         val nameOffset: Int
         var name: String? = null
         val type: Int
@@ -263,7 +290,8 @@ class ELFAnalyser private constructor(
         val size: Int
 
         override fun toString(): String {
-            return "ELFSectionHeaderEntry{nameIdx=$nameOffset, name=$name, type=$type, flags=$flags, offset=$offset, size=$size}"
+            return "ELFSectionHeaderEntry{nameIdx=$nameOffset, name=$name," +
+                "type=$type, flags=$flags, offset=$offset, size=$size}"
         }
 
         init {
@@ -281,20 +309,18 @@ class ELFAnalyser private constructor(
         }
     }
 
-    internal class ArmAeabiAttributesTag(val value: Int, val name: String, val parameterType: ParameterType) {
+    internal class ArmAeabiAttributesTag(
+        val value: Int,
+        val name: String,
+        val parameterType: ParameterType
+    ) {
         enum class ParameterType {
             UINT32, NTBS, ULEB128
         }
 
-        override fun toString(): String {
-            return "$name ($value)"
-        }
+        override fun toString(): String = "$name ($value)"
 
-        override fun hashCode(): Int {
-            var hash = 7
-            hash = 67 * hash + value
-            return hash
-        }
+        override fun hashCode(): Int = 67 * 7 + value
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
@@ -363,7 +389,11 @@ class ELFAnalyser private constructor(
             val Virtualization_use = addTag(68, "Virtualization_use", ParameterType.ULEB128)
             val MPextension_use2 = addTag(70, "MPextension_use", ParameterType.ULEB128)
 
-            private fun addTag(value: Int, name: String, type: ParameterType): ArmAeabiAttributesTag {
+            private fun addTag(
+                value: Int,
+                name: String,
+                type: ParameterType
+            ): ArmAeabiAttributesTag {
                 val tag = ArmAeabiAttributesTag(value, name, type)
 
                 if (!valueMap.containsKey(tag.value)) {
@@ -440,9 +470,9 @@ class ELFAnalyser private constructor(
         }
 
         private fun parseArmAttributes(
-            bb: ByteBuffer
+            buffer: ByteBuffer
         ): Map<Int?, Map<ArmAeabiAttributesTag?, Any>?> {
-            val format = bb.get()
+            val format = buffer.get()
 
             if (format.toInt() != 0x41) {
                 // Version A
@@ -450,22 +480,22 @@ class ELFAnalyser private constructor(
                 return emptyMap()
             }
 
-            while (bb.position() < bb.limit()) {
-                val posSectionStart = bb.position()
-                val sectionLength = bb.int
+            while (buffer.position() < buffer.limit()) {
+                val posSectionStart = buffer.position()
+                val sectionLength = buffer.int
 
                 if (sectionLength <= 0) {
                     // Fail!
                     break
                 }
 
-                val vendorName = readNTBS(bb)
+                val vendorName = readNTBS(buffer)
 
                 if ("aeabi" == vendorName) {
-                    return parseAEABI(bb)
+                    return parseAEABI(buffer)
                 }
 
-                bb.position(posSectionStart + sectionLength)
+                buffer.position(posSectionStart + sectionLength)
             }
             return emptyMap()
         }
@@ -492,24 +522,25 @@ class ELFAnalyser private constructor(
         }
 
         private fun parseFileAttribute(
-            bb: ByteBuffer
+            buffer: ByteBuffer
         ): Map<ArmAeabiAttributesTag?, Any> {
             val result: MutableMap<ArmAeabiAttributesTag?, Any> =
                 mutableMapOf()
 
-            while (bb.position() < bb.limit()) {
-                val tagValue = readULEB128(bb).toInt()
-                val tag = ArmAeabiAttributesTag.getByValue(tagValue)
+            while (buffer.position() < buffer.limit()) {
+                val tag = ArmAeabiAttributesTag.getByValue(
+                    readULEB128(buffer).toInt()
+                )
 
                 when (tag!!.parameterType) {
                     ArmAeabiAttributesTag.ParameterType.UINT32 ->
-                        result[tag] = bb.int
+                        result[tag] = buffer.int
 
                     ArmAeabiAttributesTag.ParameterType.NTBS ->
-                        result[tag] = readNTBS(bb)
+                        result[tag] = readNTBS(buffer)
 
                     ArmAeabiAttributesTag.ParameterType.ULEB128 ->
-                        result[tag] = readULEB128(bb)
+                        result[tag] = readULEB128(buffer)
                 }
             }
 
