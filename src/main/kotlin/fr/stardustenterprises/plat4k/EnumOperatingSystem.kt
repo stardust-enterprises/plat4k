@@ -82,9 +82,14 @@ enum class EnumOperatingSystem(
     DRAGONFLY_BSD("DragonflyBSD", "dragonfly"),
 
     /**
-     * Tha AIX OS. (aix)
+     * The AIX OS. (aix)
      */
     AIX("AIX", "aix"),
+
+    /**
+     * The Haiku OS. (haiku, hrev*****)
+     */
+    HAIKU("Haiku", arrayOf("haiku", "hrev")),
 
     /**
      * An unknown OS.
