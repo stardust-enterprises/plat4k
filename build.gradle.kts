@@ -1,3 +1,5 @@
+@file:Suppress("UNUSED_VARIABLE")
+
 plugins {
     `java-library`
     kotlin("jvm")
@@ -16,6 +18,7 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib"))
+    implementation("net.java.dev.jna:jna:5.10.0")
 }
 
 tasks {
@@ -23,11 +26,7 @@ tasks {
         dokkaSourceSets {
             configureEach {
                 skipDeprecated.set(true)
-
-                perPackageOption {
-                    matchingRegex.set(""".*\.jna.*""")
-                    suppress.set(true)
-                }
+                reportUndocumented.set(true)
             }
         }
     }
