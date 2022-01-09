@@ -1,8 +1,9 @@
 package fr.stardustenterprises.plat4k
 
+import com.sun.jna.ELFAnalyserWrapper
+import com.sun.jna.Native
 import fr.stardustenterprises.plat4k.EnumCPUType.X32
 import fr.stardustenterprises.plat4k.EnumCPUType.X64
-import fr.stardustenterprises.plat4k.jna.ELFAnalyser
 import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
@@ -34,12 +35,7 @@ enum class EnumArchitecture(
     /**
      * The type of CPU this architecture complains to.
      */
-    val cpuType: EnumCPUType,
-
-    /**
-     * TODO(@xtrm) Not yet documented!
-     */
-    private val postCheck: () -> Boolean = { true }
+    val cpuType: EnumCPUType
 ) {
     /**
      * The standard (or at least most common) 64-bits architecture. (x86_64,
@@ -48,10 +44,10 @@ enum class EnumArchitecture(
     X86_64("x86_64", arrayOf("x86_64", "amd64", "x64"), X64),
 
     /**
-     * The standard (or at least most common) 32-bits architecture. (i386,
-     * i486, i586, i686, x86)
+     * The standard (or at least most common) 32-bits x86 architecture.
+     * (i3, i4, i5, i6 & x86)
      */
-    X86("x86", arrayOf("i386", "i486", "i586", "i686", "x86"), X32),
+    X86("x86", arrayOf("i386", "i486", "i586", "i686", "x86", "amd32"), X32),
 
 
     /**
@@ -79,7 +75,7 @@ enum class EnumArchitecture(
     /**
      * The MIPS architecture, 64-bits. (mips64)
      */
-    MIPS_64("mips64", arrayOf("mips64"), X64),
+    MIPS_64("mips64", arrayOf("mips64", "mips64el", "mips"), X64),
 
 
     /**
@@ -118,11 +114,17 @@ enum class EnumArchitecture(
             var architecture = UNKNOWN
             val iter = values().maxOf { it.aliases.size }
 
+            val platformByteCount = if(com.sun.jna.Platform.is64Bit()) 8
+                                    else Native.POINTER_SIZE
+
             for (i in 0 until iter) {
                 values().filter { it.aliases.size > i }.forEach {
                     val id = it.aliases[i]
                     if (rawArchitecture.contains(id)) {
-                        architecture = it
+                        val cpuByteCount = it.cpuType.bits / 8
+                        if (cpuByteCount == platformByteCount) {
+                            architecture = it
+                        }
                     }
                 }
             }
@@ -176,13 +178,13 @@ enum class EnumArchitecture(
         /**
          * Whether the architecture is soft float (emulated floating point
          * unit) or hard float (on-chip floating point unit).
-         * Uses JNA's [ELFAnalyser] to do the work.
+         * Uses JNA's [ELFAnalyser] to do the work (via [ELFAnalyserWrapper]).
          */
         private val isSoftFloat: Boolean by lazy {
             try {
                 val javaBin = File("/proc/self/exe")
                 javaBin.exists() &&
-                    !ELFAnalyser.analyse(javaBin.canonicalPath).isArmHardFloat
+                    !ELFAnalyserWrapper.isArmHardFloat(javaBin.canonicalPath)
             } catch (ignored: Exception) {
                 false
             }

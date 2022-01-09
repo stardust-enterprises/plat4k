@@ -7,13 +7,28 @@ import java.io.InputStreamReader
  * Enum of known Operating System types, also includes `glibc` or `musl` stdlib
  * detection.
  *
- * @author xtrm
+ * @author xtrm, lambdagg
  */
 enum class EnumOperatingSystem(
+    /**
+     * The OperatingSystem's legible name.
+     */
     val osName: String,
+    /**
+     * Aliases from which we can identify this OperatingSystem.
+     */
     val aliases: Array<String>,
+    /**
+     * The native library prefix.
+     */
     val nativePrefix: String = "lib",
+    /**
+     * The native library "suffix"/file extension.
+     */
     val nativeSuffix: String = ".so",
+    /**
+     * Check to be run for extra detection accuracy.
+     */
     private val postCheck: () -> Boolean = { true }
 ) {
     /**

@@ -4,7 +4,7 @@ package fr.stardustenterprises.plat4k
  * A data class containing an [EnumOperatingSystem] and its paired
  * [EnumArchitecture].
  *
- * @author xtrm
+ * @author xtrm, lambdagg
  */
 data class Platform(
     /**
