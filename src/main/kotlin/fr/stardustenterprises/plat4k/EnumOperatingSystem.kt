@@ -4,8 +4,10 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 
 /**
- * Enum of known Operating System types,
- * also includes `glibc` or `musl` stdlib detection.
+ * Enum of known Operating System types, also includes `glibc` or `musl` stdlib
+ * detection.
+ *
+ * @author xtrm
  */
 enum class EnumOperatingSystem(
     val osName: String,
@@ -14,23 +16,64 @@ enum class EnumOperatingSystem(
     val nativeSuffix: String = ".so",
     private val postCheck: () -> Boolean = { true }
 ) {
+    /**
+     * The Windows OS. (windows, win)
+     */
     WINDOWS("Windows", arrayOf("windows", "win"), "", ".dll"),
 
+    /**
+     * The Linux OS. (linux, nix, nux)
+     */
     LINUX("Linux", arrayOf("linux", "nix", "nux"), postCheck = { !muslPresent && !isAndroid }),
+
+    /**
+     * The Linux MUSL OS. (linux, nix, nux)
+     */
     LINUX_MUSL("Linux-musl", arrayOf("linux", "nix", "nux"), postCheck = { muslPresent && !isAndroid }),
+
+    /**
+     * The Android OS. (android, linux, nix, nux)
+     */
     ANDROID("Android", arrayOf("android", "linux", "nix", "nux"), postCheck = { isAndroid }),
 
+    /**
+     * The Darwin OS. (darwin, macos, osx)
+     */
     MACOS("macOS", arrayOf("darwin", "macos", "osx"), nativeSuffix = ".dylib"),
 
+    /**
+     * The Solaris OS. (solaris, sunos)
+     */
     SOLARIS("Solaris", arrayOf("solaris", "sunos")),
 
+    /**
+     * The FreeBSD OS. (freebsd)
+     */
     FREE_BSD("FreeBSD", "freebsd"),
+
+    /**
+     * The NetBSD OS. (netbsd)
+     */
     NET_BSD("NetBSD", "netbsd"),
+
+    /**
+     * The OpenBSD OS. (openbsd)
+     */
     OPEN_BSD("OpenBSD", "openbsd"),
+
+    /**
+     * The DragonflyBSD OS. (dragonfly)
+     */
     DRAGONFLY_BSD("DragonflyBSD", "dragonfly"),
 
+    /**
+     * Tha AIX OS. (aix)
+     */
     AIX("AIX", "aix"),
 
+    /**
+     * An unknown OS.
+     */
     UNKNOWN("Unknown", "unknown");
 
     constructor(osName: String, identifier: String) : this(osName, arrayOf(identifier))
