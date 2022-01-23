@@ -70,20 +70,30 @@ tasks {
 
     /* Artifacts */
 
-    // Source artifact, including everything the 'main' does but not compiled.
+    // The original artifact, we just have to add the LICENSE file.
+    jar {
+        from("LICENSE")
+    }
+
+    // Source artifact, including everything the original does but not compiled.
     create("sourcesJar", Jar::class) {
         group = "build"
 
         archiveClassifier.set("sources")
         from(sourceSets.main.get().allSource)
+
+        from("LICENSE")
     }
 
+    // The Javadoc artifact, containing the Dokka output and the LICENSE file.
     create("javadocJar", Jar::class) {
         group = "build"
 
         archiveClassifier.set("javadoc")
         dependsOn(dokkaHtml)
         from(dokkaHtml)
+
+        from("LICENSE")
     }
 }
 
