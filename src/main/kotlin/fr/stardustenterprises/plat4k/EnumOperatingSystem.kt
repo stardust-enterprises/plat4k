@@ -115,7 +115,9 @@ enum class EnumOperatingSystem(
                 values().filter { it.aliases.size > i }.forEach {
                     val id = it.aliases[i]
                     if (name.contains(id)) {
-                        operatingSystem = it
+                        if(it.postCheck.invoke()) {
+                            operatingSystem = it
+                        }
                     }
                 }
             }
