@@ -1,4 +1,4 @@
-@file:Suppress("UNUSED_VARIABLE")
+import java.net.URL
 
 plugins {
     `java-library`
@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "fr.stardustenterprises"
-version = "1.5.0"
+version = "1.4.2"
 
 repositories {
     mavenCentral()
@@ -23,10 +23,43 @@ dependencies {
 
 tasks {
     dokkaHtml {
-        dokkaSourceSets {
-            configureEach {
-                skipDeprecated.set(true)
-                reportUndocumented.set(true)
+        val moduleFile = File(projectDir, "MODULE.temp.MD")
+
+        run {
+            // In order to have a description on the rendered docs, we have to have
+            // a file with the # Module thingy in it. That's what we're
+            // automagically creating here.
+
+            doFirst {
+                moduleFile.writeText("# Module $projectName\n$desc")
+            }
+
+            doLast {
+                moduleFile.delete()
+            }
+        }
+
+        moduleName.set(projectName)
+
+        dokkaSourceSets.configureEach {
+            displayName.set("$projectName github")
+            includes.from(moduleFile.path)
+
+            skipDeprecated.set(false)
+            includeNonPublic.set(false)
+            skipEmptyPackages.set(true)
+            reportUndocumented.set(true)
+            suppressObviousFunctions.set(true)
+
+            // Link the source to the documentation
+            sourceLink {
+                localDirectory.set(file("src"))
+                remoteUrl.set(URL("https://github.com/$repo/tree/trunk/src"))
+            }
+
+            // JNA external documentation links
+            externalDocumentationLink {
+                url.set(URL("https://javadoc.io/doc/net.java.dev.jna/jna/5.10.0/"))
             }
         }
     }
@@ -37,16 +70,30 @@ tasks {
 
     /* Artifacts */
 
-    // Source artifact, including everything the 'main' does but not compiled.
-    val sourcesJar by registering(Jar::class) {
-        archiveClassifier.set("sources")
-        from(sourceSets.main.get().allSource)
+    // The original artifact, we just have to add the LICENSE file.
+    jar {
+        from("LICENSE")
     }
 
-    val javadocJar by registering(Jar::class) {
+    // Source artifact, including everything the original does but not compiled.
+    create("sourcesJar", Jar::class) {
+        group = "build"
+
+        archiveClassifier.set("sources")
+        from(sourceSets.main.get().allSource)
+
+        from("LICENSE")
+    }
+
+    // The Javadoc artifact, containing the Dokka output and the LICENSE file.
+    create("javadocJar", Jar::class) {
+        group = "build"
+
         archiveClassifier.set("javadoc")
         dependsOn(dokkaHtml)
         from(dokkaHtml)
+
+        from("LICENSE")
     }
 }
 

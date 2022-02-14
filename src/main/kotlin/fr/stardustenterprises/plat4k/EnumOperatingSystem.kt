@@ -92,6 +92,11 @@ enum class EnumOperatingSystem(
     HAIKU("Haiku", arrayOf("haiku", "hrev")),
 
     /**
+     * The Illumos OS. (illumos, omnios, openindiana)
+     */
+    ILLUMOS("Illumos", arrayOf("illumos", "omnios", "openindiana")),
+
+    /**
      * An unknown OS.
      */
     UNKNOWN("Unknown", "unknown");
