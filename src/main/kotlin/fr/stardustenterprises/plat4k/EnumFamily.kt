@@ -42,7 +42,8 @@ enum class EnumFamily(
      * the provided [OperatingSystem][EnumOperatingSystem]s.
      */
     fun containsAll(vararg operatingSystems: EnumOperatingSystem): Boolean =
-        operatingSystems.all { this.operatingSystems.contains(it) }
+        operatingSystems.all { this.operatingSystems.contains(it) } &&
+            (this.parentFamily?.containsAll(*operatingSystems) ?: true)
 
     /**
      * @see EnumFamily.containsAll
