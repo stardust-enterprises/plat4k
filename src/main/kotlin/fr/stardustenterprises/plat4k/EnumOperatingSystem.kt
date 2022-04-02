@@ -82,6 +82,11 @@ enum class EnumOperatingSystem(
     DRAGONFLY_BSD("DragonflyBSD", "dragonfly"),
 
     /**
+     * Unknown BSD OS.
+     */
+    UNKNOWN_BSD("Unknown BSD", arrayOf("_DO_NOT_DETECT", "bsd")),
+
+    /**
      * The AIX OS. (aix)
      */
     AIX("AIX", "aix"),
