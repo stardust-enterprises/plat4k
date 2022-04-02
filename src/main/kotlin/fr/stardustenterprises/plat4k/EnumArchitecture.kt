@@ -117,8 +117,10 @@ enum class EnumArchitecture(
             var architecture = UNKNOWN
             val iter = values().maxOf { it.aliases.size }
 
-            val platformByteCount = if(com.sun.jna.Platform.is64Bit()) 8
-                                    else Native.POINTER_SIZE
+            val platformByteCount = if (com.sun.jna.Platform.is64Bit())
+                8
+            else
+                Native.POINTER_SIZE
 
             for (i in 0 until iter) {
                 values().filter { it.aliases.size > i }.forEach {
