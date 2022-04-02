@@ -15,7 +15,7 @@ enum class EnumFamily(
     /**
      * The parent Family, can be null.
      */
-    private val parentFamily: EnumFamily? = null
+    private val parentFamily: EnumFamily? = null,
 ) {
     /**
      * The Windows Family.
@@ -41,9 +41,16 @@ enum class EnumFamily(
      * Wheather or not this Family contains
      * the provided [OperatingSystem][EnumOperatingSystem]s.
      */
-    fun containsAll(vararg operatingSystems: EnumOperatingSystem): Boolean =
-        operatingSystems.all { this.operatingSystems.contains(it) } &&
-            (this.parentFamily?.containsAll(*operatingSystems) ?: true)
+    fun containsAll(vararg operatingSystems: EnumOperatingSystem): Boolean {
+        for (os in operatingSystems) {
+            if (!this.operatingSystems.contains(os) &&
+                this.parentFamily?.contains(os) != true
+            ) {
+                return false
+            }
+        }
+        return true
+    }
 
     /**
      * @see EnumFamily.containsAll
