@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "fr.stardustenterprises"
-version = "1.5.0"
+version = "1.6.0"
 
 repositories {
     mavenCentral()
@@ -65,7 +65,7 @@ tasks {
     }
 
     compileKotlin {
-        kotlinOptions.jvmTarget = "1.8"
+        kotlinOptions.jvmTarget = "1.6"
     }
 
     /* Artifacts */
