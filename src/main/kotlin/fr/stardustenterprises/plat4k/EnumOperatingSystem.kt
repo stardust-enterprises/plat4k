@@ -123,7 +123,7 @@ enum class EnumOperatingSystem(
             val iter = values().maxOf { it.aliases.size }
             for (i in 0 until iter) {
                 values().filter { it.aliases.size > i }.forEach {
-                    val id = it.aliases[i]
+                    val id = it.aliases[i].replace(" ", "")
                     if (name.contains(id)) {
                         if(it.postCheck.invoke()) {
                             operatingSystem = it
