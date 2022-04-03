@@ -117,7 +117,9 @@ enum class EnumOperatingSystem(
          */
         @JvmStatic
         val currentOS: EnumOperatingSystem by lazy {
-            val name = System.getProperty("os.name").lowercase()
+            val name = System.getProperty("os.name")
+                .lowercase()
+                .replace(" ", "")
 
             var operatingSystem = UNKNOWN
             val iter = values().maxOf { it.aliases.size }
