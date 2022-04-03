@@ -18,7 +18,7 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation("net.java.dev.jna:jna:5.10.0")
+    implementation("net.java.dev.jna:jna:5.11.0")
 }
 
 tasks {
