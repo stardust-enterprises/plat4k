@@ -4,6 +4,28 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 
 /**
+ * See: [EnumOperatingSystem.muslPresent]
+ */
+private val musl: Boolean by lazy {
+    try {
+        val p = ProcessBuilder("ldd", "--version").start()
+        var line = BufferedReader(InputStreamReader(p.inputStream)).readLine()
+        if (line == null) {
+            line = BufferedReader(InputStreamReader(p.errorStream)).readLine()
+        }
+        line != null && line.lowercase().startsWith("musl")
+    } catch (fail: Exception) {
+        false
+    }
+}
+
+/**
+ * See: [EnumOperatingSystem.isAndroid]
+ */
+private val android: Boolean =
+    System.getProperty("java.vm.vendor")?.lowercase()?.contains("android") ?: false
+
+/**
  * Enum of known Operating System types, also includes `glibc` or `musl` stdlib
  * detection.
  *
@@ -39,17 +61,17 @@ enum class EnumOperatingSystem(
     /**
      * The Linux OS. (linux, nix, nux)
      */
-    LINUX("Linux", arrayOf("linux", "nix", "nux"), postCheck = { !muslPresent && !isAndroid }),
+    LINUX("Linux", arrayOf("linux", "nix", "nux"), postCheck = { !musl && !android }),
 
     /**
      * The Linux MUSL OS. (linux, nix, nux)
      */
-    LINUX_MUSL("Linux-musl", arrayOf("linux", "nix", "nux"), postCheck = { muslPresent && !isAndroid }),
+    LINUX_MUSL("Linux-musl", arrayOf("linux", "nix", "nux"), postCheck = { musl && !android }),
 
     /**
      * The Android OS. (android, linux, nix, nux)
      */
-    ANDROID("Android", arrayOf("android", "linux", "nix", "nux"), postCheck = { isAndroid }),
+    ANDROID("Android", arrayOf("android", "linux", "nix", "nux"), postCheck = { android }),
 
     /**
      * The Darwin OS. (darwin, macos, osx)
@@ -143,24 +165,14 @@ enum class EnumOperatingSystem(
          * For more info, see [musl libc](https://musl.libc.org/)
          */
         @JvmStatic
-        val muslPresent: Boolean by lazy {
-            try {
-                val p = ProcessBuilder("ldd", "--version").start()
-                var line = BufferedReader(InputStreamReader(p.inputStream)).readLine()
-                if (line == null) {
-                    line = BufferedReader(InputStreamReader(p.errorStream)).readLine()
-                }
-                line != null && line.lowercase().startsWith("musl")
-            } catch (fail: Exception) {
-                false
-            }
-        }
+        val muslPresent: Boolean =
+            musl
 
         /**
          * Is the current Operating System [ANDROID].
          */
         @JvmStatic
         val isAndroid: Boolean =
-            System.getProperty("java.vm.vendor")?.lowercase()?.contains("android") ?: false
+            android
     }
 }
