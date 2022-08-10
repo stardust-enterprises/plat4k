@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "fr.stardustenterprises"
-version = "1.6.2"
+version = "1.6.3"
 
 repositories {
     mavenCentral()
@@ -18,7 +18,7 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation("net.java.dev.jna:jna:5.11.0")
+    implementation("net.java.dev.jna:jna:5.12.1")
 }
 
 tasks {
@@ -65,7 +65,7 @@ tasks {
     }
 
     compileKotlin {
-        kotlinOptions.jvmTarget = "1.6"
+        kotlinOptions.jvmTarget = "1.8"
     }
 
     /* Artifacts */
