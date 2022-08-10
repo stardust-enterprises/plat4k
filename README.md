@@ -11,7 +11,7 @@ you can import [plat4k][plat4k] from [maven central][mvnc] just by adding it to 
 
 ```kotlin
 dependencies {
-    implementation("fr.stardustenterprises:plat4k:{VERSION}")
+    implementation("fr.stardustenterprises:plat4k:1.6.3")
 }
 ```
 
@@ -21,7 +21,7 @@ dependencies {
 <dependency>
     <groupId>fr.stardustenterprises</groupId>
     <artifactId>plat4k</artifactId>
-    <version>{VERSION}</version>
+    <version>1.6.3</version>
 </dependency>
 ```
 
